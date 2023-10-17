@@ -15,6 +15,9 @@ type Context struct {
 	Method     string
 	Params     map[string]string
 	StatusCode int
+
+	Handlers []HandlerFunc
+	index    int
 }
 
 func newContext(w http.ResponseWriter, r *http.Request) *Context {
@@ -23,6 +26,7 @@ func newContext(w http.ResponseWriter, r *http.Request) *Context {
 		Req:    r,
 		Path:   r.URL.Path,
 		Method: r.Method,
+		index:  -1,
 	}
 }
 
@@ -72,4 +76,13 @@ func (c *Context) HTML(code int, html string) {
 	c.Status(code)
 	c.SetHeader("Content-Type", "text/html")
 	c.Writer.Write([]byte(html))
+}
+
+func (c *Context) Next() {
+	s := len(c.Handlers)
+	c.index++
+
+	for ; c.index < s; c.index++ {
+		c.Handlers[c.index](c)
+	}
 }

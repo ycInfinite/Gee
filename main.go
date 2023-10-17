@@ -6,6 +6,11 @@ import (
 
 func main() {
 	r := gee.New()
+	r.Use(gee.Logger())
+
+	r.Get("/", func(c *gee.Context) {
+		c.HTML(200, "<h1>hello</h1>")
+	})
 	//r.Get("/", func(c *gee.Context) {
 	//	c.HTML(200, "<h1>hello</h1>")
 	//})
